@@ -8,12 +8,14 @@ template<typename T>
 class SNR
 {
 public:
-	Data_preprocess Snr(Data_preprocess<int>  snr_pre, Data_preprocess<int> RMS_time);
+	Data_preprocess<T> Snr(Data_preprocess<T>  snr_pre, Data_preprocess<T> snr_fund_freq);
 
 private:
 	Data_preprocess<T> snr_pre; //int
 	Data_preprocess<T> RMS_time; //int
+	Data_preprocess<T> snr_fund_freq;
 	double snr;
+
 };
 #endif
 

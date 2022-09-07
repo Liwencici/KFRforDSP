@@ -6,8 +6,8 @@
 
 using namespace kfr;
 template <typename T>
- Data_preprocess<T> SNR<T>::Snr(Data_preprocess<T> * snr_pre, Data_preprocess<T> RMS_time)
+ Data_preprocess<T> SNR<T>::Snr(Data_preprocess<T> snr_pre, Data_preprocess<T> snr_fund_freq)
 {
-	 snr = RMS_time / snr_pre;
+	 snr = snr_fund_freq / snr_pre;
 	 return snr;
 }

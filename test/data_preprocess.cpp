@@ -41,7 +41,16 @@ int Data_preprocess<T>::Freq_dom(T *data_val, loadfile<T> dec_num)
 }
 
 template<typename T>
-int Data_preprocess<T>::Freq_cacul(univector<double> * freq, loadfile<T> dec_num)
+int Data_preprocess<T>::Freq_cacul_fundamental(univector<double>* freq, loadfile<T> dec_num)
+{
+	int sum = freq[1].real() ^ 2 + freq[1].imag() ^ 2;
+	snr_fund_freq = sqrt(sum);
+	return snr_fund_freq;
+}
+
+template<typename T>
+
+int Data_preprocess<T>::Freq_cacul_harmonic(univector<double> * freq, loadfile<T> dec_num)
 {
 	int sum = freq[0].real();
 	int sum1 = 0;

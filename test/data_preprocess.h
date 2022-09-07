@@ -20,6 +20,7 @@ private:
 	loadfile<T> data; 
 	int RMS_time; //时域上的RMS值
 	int snr_pre;//频域上的除前5个谐波和DC之外的所有其他分量的RMS
+	int snr_fund_freq;//基波(一次谐波)的RMS
 	univector<complex<double>, dec_num> freq; //freq为大小dec_num的无符号double容器
 	univector<complex<double>, dec_num> data_val; //data-->data_val
 	
@@ -31,7 +32,8 @@ public:
 	loadfile get_data(T *data);
 	int Time_dom(T *data_val, loadfile<T> dec_num);//返回值为时域上的RMS值
 	int Freq_dom(T *data_val, loadfile<T> dec_num);//返回值为频域上的计算出的freq[i]=振幅
-	int Freq_cacul(univector<double> *freq, loadfile<T> dec_num);
+	int Freq_cacul_fundamental(univector<double> *freq, loadfile<T> dec_num);
+	int Freq_cacul_harmonic(univector<double> *freq, loadfile<T> dec_num);
 	template<typename T>
 };
 
