@@ -12,6 +12,8 @@ private:
 	static int dec_num;//采样点个数
 	size_t size;//文件大小
 	float samplerate;//采样率
+	float freq_basic;//基波频率
+
 	//loadfile readfile;//对象
 	int DecArr[MAX] = { 0 };
 	static int DEC[dec_num]; //十进制数据,dec_num个采样点
