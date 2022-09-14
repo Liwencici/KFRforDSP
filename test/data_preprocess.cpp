@@ -4,11 +4,14 @@
 using namespace kfr;
 
 template<typename T>
- loadfile<T> Data_preprocess<T>::get_num(T dec_num) 
+ loadfile<T> Data_preprocess<T>::get_num(T dec_num,T *DEC) 
 {
 	 N = dec_num;
-	 while(N_num(N)==false)
+	 while (N_num(N) == false)
+	 {
 		 N = N + 1;
+		 DEC[N] = 0;
+	 }
 	 return N;
 }
 
@@ -45,7 +48,7 @@ bool Data_preprocess<T>::N_num(int n)
 }
 
 template<typename T>
-int Data_preprocess<T>::Time_dom(T *data_val, loadfile<T>  dec_num)
+int Data_preprocess<T>::Time_dom(T *data_val, loadfile<T>  dec_num) //²»ÐèÒª²¹0
 {
 	for (int i = 0; i < dec_num; i++)
 		sum = sum + data_val[i]^2;

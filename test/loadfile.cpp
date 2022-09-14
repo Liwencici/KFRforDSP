@@ -54,7 +54,7 @@ int loadfile<T>::loadfile_voltage()   //协议未拟好
 		ifs_read.close();
 	}
 	file.Close();
-	data = rms(make_univector(DEC)); //数据传递到KFR函数
+	data = rms(make_univector(DEC)); //数据传递到KFR函数??????
 	return data;
 }
 
