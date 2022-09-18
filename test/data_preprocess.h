@@ -15,30 +15,44 @@ template <typename T >
 class Data_preprocess 
 {
 private:
-	loadfile<T> samplerate; //采样率
+	double samplerate; //采样率
+	double freq_basic; //（输入）基波频率
+
 	loadfile<T> dec_num;  //采样点个数
 	loadfile<T> DEC; //十进制文件（补0）
 	int N=0; //2的n次幂的倍数采样点
-	loadfile<T> data; //没补0的值
-	loadfile<T> freq_basic; //基波频率
-	int RMS_time; //时域上的RMS值
-	float snr_pre;//频域上的除前5个谐波和DC之外的所有其他分量的RMS
-	float snr_fund_freq;//基波(一次谐波)的RMS
-	univector<complex<double>> freq; //freq为大小dec_num的无符号double容器
-	univector<complex<double>> data_val; //data-->data_val
+	//loadfile<T> data; //没补0的值//int[]
 	
+	int dec_num_0; //补0后的采样点个数
+	
+	int RMS_time; //时域上的RMS值
+	double snr_pre;//频域上的除前5个谐波和DC之外的所有其他分量的RMS
+	double snr_fund_freq;//基波(一次谐波)的RMS
+	univector<complex<double>> freq; //freq为无符号double容器
+									 
+	//univector<complex<double>> data_val; //data-->data_val
+	
+	double thd_harm;//THD谐波
 	//频域信号的Real Part（实部），Imag Part（虚部），Mag（幅值），Angle（相位角）
 	//U8 char ;U16 short int; U32 int U64 
 public:
-	loadfile<T> get_num(T dec_num,T *DEC);
-	loadfile<T> get_samplerate();
-	loadfile<T> get_freq_basic();
-	loadfile<T> get_data(T *data);
+	//snr_set
+	void set_num0(T &dec_num,T *&DEC);//采样点补0
+    void set_samplerate(double x);
+	void set_freq_basic(double x);
+
+	//snr_get
+	
+	//snr_caculate
 	bool N_num(int n); //判断dec_num是否为2的幂次倍
 	int Time_dom(T *data_val, loadfile<T>dec_num);//返回值为时域上的RMS值
-	int Freq_dom(T *data_val, loadfile<T> dec_num);//返回值为频域上的计算出的freq[i]=振幅
-	int Freq_cacul_fundamental(univector<double> *freq,loadfile<T> freq_basic);//基频RMS
-	int Freq_cacul_harmonic(univector<double> *freq,loadfile<T> freq_basic); //除DC+5个直流之外的谐波
+	double *Freq_dom(T *data_val, loadfile<T> dec_num);//FFT:返回值为频域上的计算出的freq[i]=振幅
+	double Freq_cacul_fundamental(univector<double> *freq, double samplerate, double freq_basic);//基频RMS
+	double Freq_cacul_harmonic(univector<double> *freq, double samplerate, double freq_basic); //除DC+5个直流之外的谐波
+
+	//THD
+	double Freq_cacul_har(univector<double> *freq, double samplerate, double freq_basic) //谐波
+
 };
 
 template <typename T> // data type, float or double

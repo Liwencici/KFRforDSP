@@ -4,34 +4,27 @@
 using namespace kfr;
 
 template<typename T>
- loadfile<T> Data_preprocess<T>::get_num(T dec_num,T *DEC) 
+ void Data_preprocess<T>::set_num0(T &dec_num,T *&DEC) //采样点补0 
 {
-	 N = dec_num;
+	 int N = dec_num;
 	 while (N_num(N) == false)
 	 {
 		 N = N + 1;
 		 DEC[N] = 0;
 	 }
-	 return N;
+	 dec_num_0 = N;
 }
 
 template<typename T>
-loadfile<T> Data_preprocess<T>::get_samplerate()
+void Data_preprocess<T>::set_samplerate(double x)
 {
-	return samplerate;
+	samplerate = x;
 }
 
 template<typename T>
-loadfile<T> Data_preprocess<T>::get_freq_basic()
+void Data_preprocess<T>::set_freq_basic(double x)
 {
-	return freq_basic;
-}
-
-template<typename T>
-loadfile<T> Data_preprocess<T>::get_data(T *data)
-{
-	data_val = data;
-	return data_val;
+	freq_basic = x;
 }
 
 template<typename T>
@@ -48,43 +41,56 @@ bool Data_preprocess<T>::N_num(int n)
 }
 
 template<typename T>
-int Data_preprocess<T>::Time_dom(T *data_val, loadfile<T>  dec_num) //不需要补0
+int Data_preprocess<T>::Time_dom(T *DEC, loadfile<T> dec_num) //不需要补0
 {
 	for (int i = 0; i < dec_num; i++)
-		sum = sum + data_val[i]^2;
+		sum = sum + DEC[i]^2;
 	RMS_time = sqrt(sum / dec_num);
 	return RMS_time;
 }
 
 template<typename T>
-int Data_preprocess<T>::Freq_dom(T *data_val, loadfile<T> dec_num)
+double *Data_preprocess<T>::Freq_dom(T *DEC, loadfile<T> dec_num) //需要补0
 {
+	Data_preprocess h;
+	h.set_num0(int &dec_num, int *&DEC);
+	int N_add = dec_num;
+	std::vector<double> dec;
+	dec = DEC;
 	dft_plan<u32> plan(dec_num);
 	univector<u32> temp(plan.temp_size);
-	plan.execute(freq, data_val, temp, false); 
+	plan.execute(freq, dec, temp, false); 
 	return freq;
 }
 
 template<typename T>
-int Data_preprocess<T>::Freq_cacul_fundamental(univector<double>* freq,  loadfile<T> freq_basic)
+double Data_preprocess<T>::Freq_cacul_fundamental(univector<double>* freq,double samplerate, double freq_basic)
 {
 	Data_preprocess h;
-	N = h.get_num();
-	fs = h.get_samplerate();//采样率
-	F = fs / N; //频率分辨率
-	int i = fs / F; //基频点
+
+	double fs = h.set_samplerate(samplerate);//采样率
+	double fre_input = h.set_freq_basic(freq_basic);//基频
+
+	double F = fs / N; //频率分辨率
+	int i = fre_input/ F; //基频点
 	int sum = freq[i].real() ^ 2 + freq.imag() ^ 2;
 	snr_fund_freq = sqrt(sum);
 	return snr_fund_freq;
 }
 
 template<typename T>
-int Data_preprocess<T>::Freq_cacul_harmonic(univector<double> * freq,  loadfile<T> freq_basic)
+double Data_preprocess<T>::Freq_cacul_harmonic(univector<double> * freq, double samplerate, double freq_basic)
 {
 	Data_preprocess h;
-	fs = h.get_samplerate();
-	N = h.get_num();
-	F = fs / N;
+	h.set_num0(int &dec_num, int *&DEC);
+	int N = dec_num;
+	std::vector<double> dec;
+	dec = DEC;
+
+	double fs = h.set_samplerate(samplerate);//采样率
+	double fre_input = h.set_freq_basic(freq_basic);//基频
+
+	double F = fs / N;
 	int i1 = fs / N; //基频点（一次谐波）
 	int i2 = i1 * 2;//二次谐波点
 	int i3 = i1 * 3;//三次谐波点
@@ -101,7 +107,29 @@ int Data_preprocess<T>::Freq_cacul_harmonic(univector<double> * freq,  loadfile<
 
 	snr_pre = RMS_all - RMS_5;
 	return snr_pre;
-
-
 }
 
+template<typename T>
+double Data_preprocess<T>::Freq_cacul_har(univector<double> * freq, double samplerate, double freq_basic)
+{
+	Data_preprocess h;
+	h.set_num0(int &dec_num, int *&DEC);
+	int N = dec_num;
+	std::vector<double> dec;
+	dec = DEC;
+
+	double fre_input = h.set_freq_basic(freq_basic);//基频
+	double F = fs / N; //频率分辨率
+	int bas = fre_input / F; //基频点
+	double sum = 0;
+
+	int a[1000];
+	int j = 0;
+	for (int i = 1; i < N / 2 - 1; i++)
+		if (i%bas == 0)
+			a[j] = i;//保留倍频位置
+	for (int i = 1; i <= j; i++)
+		sum = freq[a[i]].real() ^ 2 + freq[a[i]].imag() ^ 2;
+	thd_harm = sqrt(sum);
+	return thd_harm;
+}
