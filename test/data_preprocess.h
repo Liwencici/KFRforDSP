@@ -51,7 +51,7 @@ public:
 	double Freq_cacul_harmonic(univector<double> *freq, double samplerate, double freq_basic); //除DC+5个直流之外的谐波
 
 	//THD
-	double Freq_cacul_har(univector<double> *freq, double samplerate, double freq_basic) //谐波
+	double Freq_cacul_har(univector<double> *freq, double samplerate, double freq_basic);//谐波
 
 };
 

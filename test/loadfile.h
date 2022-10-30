@@ -26,7 +26,7 @@ public:
 	}*/
 
 	int loadfile_voltage();
-	int Hex_Conversion_Dec(T &aHex);//进制转换, T=std::string
+	int Hex_Conversion_Dec(T *aHex ,int len);//进制转换, T=std::string
 };
 #endif
 
